@@ -650,15 +650,14 @@ SubMesh AssimpLoader::Implementation::CreateSubMesh(
     subMesh.AddVertex(vertex);
     subMesh.AddNormal(normal);
     // Iterate over sets of texture coordinates
-    int uvIdx = 0;
-    while(_assimpMesh->HasTextureCoords(uvIdx))
+    for (unsigned int i = 0; i < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++i)
     {
+      if (!_assimpMesh->HasTextureCoords(i))
+        continue;
       math::Vector3d texcoords;
-      texcoords.X(_assimpMesh->mTextureCoords[uvIdx][vertexIdx].x);
-      texcoords.Y(_assimpMesh->mTextureCoords[uvIdx][vertexIdx].y);
-      // TODO(luca) why do we need 1.0 - Y?
-      subMesh.AddTexCoordBySet(texcoords.X(), 1.0 - texcoords.Y(), uvIdx);
-      ++uvIdx;
+      texcoords.X(_assimpMesh->mTextureCoords[i][vertexIdx].x);
+      texcoords.Y(_assimpMesh->mTextureCoords[i][vertexIdx].y);
+      subMesh.AddTexCoordBySet(texcoords.X(), texcoords.Y(), i);
     }
   }
   for (unsigned faceIdx = 0; faceIdx < _assimpMesh->mNumFaces; ++faceIdx)
